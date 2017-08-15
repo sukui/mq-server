@@ -1,5 +1,5 @@
 {
-  "name": "zanphp/tcp-server",
+  "name": "zanphp/mq-server",
   "require": {
     "php": ">=5.6"
   },
