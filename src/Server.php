@@ -10,6 +10,7 @@ use Zan\Framework\Network\Server\WorkerStart\InitializeErrorHandler;
 use Zan\Framework\Network\Server\WorkerStart\InitializeServiceChain;
 use Zan\Framework\Network\Server\WorkerStart\InitializeWorkerMonitor;
 use Zan\Framework\Network\Server\WorkerStart\InitializeServerDiscovery;
+use Zan\Framework\Network\Server\WorkerStart\InitializeHawkMonitor;
 use swoole_http_server as SwooleServer;
 use swoole_http_request as SwooleHttpRequest;
 use swoole_http_response as SwooleHttpResponse;
@@ -28,6 +29,7 @@ class Server extends ServerBase
 
     protected $workerStartItems = [
         InitializeErrorHandler::class,
+        InitializeHawkMonitor::class,
         InitializeConnectionPool::class,
         InitializeWorkerMonitor::class,
         InitializeServerDiscovery::class,
