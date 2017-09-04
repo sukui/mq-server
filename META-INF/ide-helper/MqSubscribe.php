@@ -1,8 +1,8 @@
 <?php
 
-namespace ZanPHP\MqServer;
-use ZanPHP\MqServer\Subscribe\Manager;
+namespace Zan\Framework\Network\MqSubscribe;
 
+use Zan\Framework\Network\MqSubscribe\Subscribe\Manager;
 
 /**
  * Class MqSubscribe

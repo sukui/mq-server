@@ -1,11 +1,11 @@
 <?php
 
-namespace ZanPHP\MqServer\Subscribe;
+namespace Zan\Framework\Network\MqSubscribe\Subscribe;
 
 use Kdt\Iron\NSQ\Message\Msg;
+use Zan\Framework\Foundation\Container\Di;
+use Zan\Framework\Foundation\Coroutine\Task;
 use Zan\Framework\Sdk\Queue\NSQ\Queue;
-use ZanPHP\Coroutine\Task;
-use ZanPHP\Support\Di;
 
 class Client
 {
