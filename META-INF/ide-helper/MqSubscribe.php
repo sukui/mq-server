@@ -2,7 +2,7 @@
 
 namespace Zan\Framework\Network\MqSubscribe;
 
-use Zan\Framework\Network\MqSubscribe\Subscribe\Manager;
+use ZanPHP\MqServer\Subscribe\Manager;
 
 /**
  * Class MqSubscribe
