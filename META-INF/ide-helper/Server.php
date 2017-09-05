@@ -2,95 +2,57 @@
 
 namespace Zan\Framework\Network\MqSubscribe;
 
-use Zan\Framework\Network\Http\RequestHandler;
-use Zan\Framework\Network\MqSubscribe\WorkerStart\InitializeMqSubscribe;
-use Zan\Framework\Network\Server\ServerStart\InitLogConfig;
-use Zan\Framework\Network\Server\WorkerStart\InitializeConnectionPool;
-use Zan\Framework\Network\Server\WorkerStart\InitializeErrorHandler;
-use Zan\Framework\Network\Server\WorkerStart\InitializeServiceChain;
-use Zan\Framework\Network\Server\WorkerStart\InitializeWorkerMonitor;
-use Zan\Framework\Network\Server\WorkerStart\InitializeServerDiscovery;
-use Zan\Framework\Network\Server\WorkerStart\InitializeHawkMonitor;
-use swoole_http_server as SwooleServer;
 use swoole_http_request as SwooleHttpRequest;
 use swoole_http_response as SwooleHttpResponse;
-use Zan\Framework\Network\Server\ServerBase;
-use Zan\Framework\Network\ServerManager\ServerStore;
-use Zan\Framework\Network\ServerManager\ServerDiscoveryInitiator;
-use Zan\Framework\Foundation\Core\Config;
-use Zan\Framework\Network\Tcp\ServerStart\InitializeSqlMap;
+use ZanPHP\ServerBase\ServerBase;
+
 
 class Server extends ServerBase
 {
-    protected $serverStartItems = [
-        InitializeSqlMap::class,
-        InitLogConfig::class,
-    ];
+    private $Server;
 
-    protected $workerStartItems = [
-        InitializeErrorHandler::class,
-        InitializeHawkMonitor::class,
-        InitializeConnectionPool::class,
-        InitializeWorkerMonitor::class,
-        InitializeServerDiscovery::class,
-        InitializeServiceChain::class,
-        InitializeMqSubscribe::class,
-    ];
+    public function __construct()
+    {
+        $this->Server = new \ZanPHP\MqServer\Server();
+    }
 
     public function setSwooleEvent()
     {
-        $this->swooleServer->on('start', [$this, 'onStart']);
-        $this->swooleServer->on('shutdown', [$this, 'onShutdown']);
-
-        $this->swooleServer->on('workerStart', [$this, 'onWorkerStart']);
-        $this->swooleServer->on('workerStop', [$this, 'onWorkerStop']);
-        $this->swooleServer->on('workerError', [$this, 'onWorkerError']);
-
-        $this->swooleServer->on('request', [$this, 'onRequest']);
+        $this->Server->setSwooleEvent();
     }
 
     protected function init()
     {
-        $config = Config::get('registry');
-        if (!isset($config['app_names']) || [] === $config['app_names']) {
-            return;
-        }
-        ServerStore::getInstance()->resetLockDiscovery();
+        $this->Server->init();
     }
 
     public function onStart($swooleServer)
     {
-        $this->writePid($swooleServer->master_pid);
-        sys_echo("server starting .....");
+        $this->Server->onStart($swooleServer);
     }
 
     public function onShutdown($swooleServer)
     {
-        $this->removePidFile();
-        sys_echo("server shutdown .....");
+        $this->Server->onShutdown($swooleServer);
     }
 
     public function onWorkerStart($swooleServer, $workerId)
     {
-        $this->bootWorkerStartItem($workerId);
-        sys_echo("worker *$workerId starting .....");
-        (new MqSubscribe())->start();
-        sys_echo("mq subscribe in worker *$workerId starting .....");
+        $this->Server->onWorkerStart($swooleServer, $workerId);
     }
 
     public function onWorkerStop($swooleServer, $workerId)
     {
-        // ServerDiscoveryInitiator::getInstance()->unlockDiscovery($workerId);
-        sys_echo("worker *$workerId stopping .....");
+        $this->Server->onWorkerStop($swooleServer, $workerId);
     }
 
     public function onWorkerError($swooleServer, $workerId, $workerPid, $exitCode, $sigNo)
     {
-        // ServerDiscoveryInitiator::getInstance()->unlockDiscovery($workerId);
+        $this->Server->onWorkerError($swooleServer, $workerId, $workerPid, $exitCode, $sigNo);
     }
 
     public function onRequest(SwooleHttpRequest $swooleHttpRequest, SwooleHttpResponse $swooleHttpResponse)
     {
-        (new RequestHandler())->handle($swooleHttpRequest, $swooleHttpResponse);
+        $this->Server->onRequest($swooleHttpRequest, $swooleHttpResponse);
     }
 }

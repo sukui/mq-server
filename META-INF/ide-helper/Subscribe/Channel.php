@@ -4,74 +4,35 @@ namespace Zan\Framework\Network\MqSubscribe\Subscribe;
 
 class Channel
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var Topic
-     */
-    private $topic;
-
-    /**
-     * @var array Client[]
-     */
-    private $clients = [];
-    
-    private $totalMsgCount = 0;
+    private $Channel;
     
     public function __construct($name, Topic $topic)
     {
-        $this->name = $name;
-        $this->topic = $topic;
+        $this->Channel = new \ZanPHP\MqServer\Subscribe\Channel($name, $topic);
     }
 
-    /**
-     * 获取Channel名字
-     * 
-     * @return string
-     */
     public function getName()
     {
-        return $this->name;
+        $this->Channel->getName();
     }
 
-    /**
-     * 获取所属topic实例
-     * 
-     * @return Topic
-     */
     public function getTopic()
     {
-        return $this->topic;
+        $this->Channel->getTopic();
     }
 
-    /**
-     * 初始化Client
-     * 
-     * @param array $config
-     */
     public function initClient(array $config)
     {
-        $client = new Client($config, $this);
-        
-        $this->clients[] = $client;
+        $this->Channel->initClient($config);
     }
 
-    /**
-     * 获取当前Channel下Client列表
-     * 
-     * @return array Client[]
-     */
     public function getClients()
     {
-        return $this->clients;
+        $this->Channel->getClients();
     }
     
     public function incrMsgCount()
     {
-        $this->totalMsgCount++;
-        $this->topic->incrMsgCount();
+        $this->Channel->incrMsgCount();
     }
 }
