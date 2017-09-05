@@ -1,9 +1,9 @@
 <?php
 
-namespace ZanPHP\MqServer\Subscribe;
+namespace Zan\Framework\Network\MqSubscribe\Subscribe;
 
-use ZanPHP\Support\Singleton;
-use ZanPHP\WorkerMonitor\WorkerMonitor;
+use Zan\Framework\Network\Server\Monitor\Worker;
+use Zan\Framework\Utilities\DesignPattern\Singleton;
 
 class Manager
 {
@@ -131,6 +131,6 @@ class Manager
     public function incrMsgCount()
     {
         $this->totalMsgCount++;
-        WorkerMonitor::singleton()->incrMsgCount();
+        Worker::singleton()->incrMsgCount();
     }
 }

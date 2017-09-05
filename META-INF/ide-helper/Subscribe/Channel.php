@@ -1,6 +1,6 @@
 <?php
 
-namespace ZanPHP\MqServer\Subscribe;
+namespace Zan\Framework\Network\MqSubscribe\Subscribe;
 
 class Channel
 {
