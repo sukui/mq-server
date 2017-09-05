@@ -1,10 +1,10 @@
 <?php
-namespace Zan\Framework\Network\MqSubscribe\WorkerStart;
 
+namespace ZanPHP\MqServer\WorkerStart;
 
-use Zan\Framework\Foundation\Core\Config;
-use Zan\Framework\Network\MqSubscribe\Subscribe\Checker;
-use Zan\Framework\Network\MqSubscribe\Subscribe\Manager;
+use ZanPHP\Contracts\Config\Repository;
+use ZanPHP\MqServer\Subscribe\Checker;
+use ZanPHP\MqServer\Subscribe\Manager;
 
 class InitializeMqSubscribe
 {
@@ -13,7 +13,8 @@ class InitializeMqSubscribe
      */
     public function bootstrap($server)
     {
-        $config = Config::get('nsqConfig', []);
+        $repository = make(Repository::class);
+        $config = $repository->get('nsqConfig', []);
         Checker::handle($config);
         Manager::singleton()->init($config);
     }

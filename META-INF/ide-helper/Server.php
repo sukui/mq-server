@@ -1,23 +1,24 @@
 <?php
 
-namespace ZanPHP\MqServer;
+namespace Zan\Framework\Network\MqSubscribe;
 
+use Zan\Framework\Network\Http\RequestHandler;
+use Zan\Framework\Network\MqSubscribe\WorkerStart\InitializeMqSubscribe;
+use Zan\Framework\Network\Server\ServerStart\InitLogConfig;
+use Zan\Framework\Network\Server\WorkerStart\InitializeConnectionPool;
+use Zan\Framework\Network\Server\WorkerStart\InitializeErrorHandler;
+use Zan\Framework\Network\Server\WorkerStart\InitializeServiceChain;
+use Zan\Framework\Network\Server\WorkerStart\InitializeWorkerMonitor;
+use Zan\Framework\Network\Server\WorkerStart\InitializeServerDiscovery;
+use Zan\Framework\Network\Server\WorkerStart\InitializeHawkMonitor;
 use swoole_http_server as SwooleServer;
 use swoole_http_request as SwooleHttpRequest;
 use swoole_http_response as SwooleHttpResponse;
-use ZanPHP\Contracts\Config\Repository;
-use ZanPHP\ServiceStore\ServiceStore;
-use ZanPHP\HttpServer\RequestHandler;
-use ZanPHP\MqServer\WorkerStart\InitializeMqSubscribe;
-use ZanPHP\ServerBase\ServerBase;
-use ZanPHP\ServerBase\ServerStart\InitLogConfig;
-use ZanPHP\ServerBase\WorkerStart\InitializeConnectionPool;
-use ZanPHP\ServerBase\WorkerStart\InitializeErrorHandler;
-use ZanPHP\ServerBase\WorkerStart\InitializeHawkMonitor;
-use ZanPHP\ServerBase\WorkerStart\InitializeServerDiscovery;
-use ZanPHP\ServerBase\WorkerStart\InitializeServiceChain;
-use ZanPHP\ServerBase\WorkerStart\InitializeWorkerMonitor;
-use ZanPHP\TcpServer\ServerStart\InitializeSqlMap;
+use Zan\Framework\Network\Server\ServerBase;
+use Zan\Framework\Network\ServerManager\ServerStore;
+use Zan\Framework\Network\ServerManager\ServerDiscoveryInitiator;
+use Zan\Framework\Foundation\Core\Config;
+use Zan\Framework\Network\Tcp\ServerStart\InitializeSqlMap;
 
 class Server extends ServerBase
 {
@@ -50,12 +51,11 @@ class Server extends ServerBase
 
     protected function init()
     {
-        $repository = make(Repository::class);
-        $config = $repository->get('registry');
+        $config = Config::get('registry');
         if (!isset($config['app_names']) || [] === $config['app_names']) {
             return;
         }
-        ServiceStore::getInstance()->resetLockDiscovery();
+        ServerStore::getInstance()->resetLockDiscovery();
     }
 
     public function onStart($swooleServer)
